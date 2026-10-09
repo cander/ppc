@@ -1,8 +1,8 @@
-from ppc.lexer import nextch
+from ppc.lexer import Lexer
 
 def main() -> None:
     print("Hello from ppc!")
-    print(f"nextch() = {nextch()}")
+    # print(f"nextch() = {nextch()}")
 
 
 if __name__ == '__main__':

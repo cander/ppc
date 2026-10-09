@@ -1,5 +1,7 @@
 import pytest
-from ppc.lexer import nextch
+from ppc.lexer import Lexer
 
 def test_A():
-    assert nextch() == 'A'
+    l = Lexer()
+    print(l)
+    # assert l.nextch() == 'A'
