@@ -13,7 +13,11 @@ class LexerInput:
     def nextch(self):
         # need eol and eof handling
         self.current_char = self.in_file.read(1)
-        self.column_position += 1
+        if self.current_char == '':
+            self.at_eof = True
+        else:
+            self.column_position += 1
+
         return self.current_char
 
 
