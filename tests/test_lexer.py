@@ -1,7 +1,7 @@
 import pytest
-from ppc.lexer import Lexer
+from ppc.lexer import LexerInput
 
-def test_A():
-    l = Lexer()
-    print(l)
-    # assert l.nextch() == 'A'
+def test_nextch():
+    l = LexerInput()
+    assert l.nextch() == 'A'
+    assert l.current_char == 'A'
