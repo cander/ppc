@@ -26,3 +26,16 @@ class TestLexerInput:
         assert l.current_char == ''
         assert l.column_position == 2
         assert l.at_eof == True
+
+    def test_nextch_end_of_line(self):
+        l = LexerInput(io.StringIO("a\nb"))
+        assert l.at_eol == False
+        assert l.nextch() == 'a'
+
+        l.nextch()  # don't care about returned character
+        assert l.at_eol == True
+
+        # next call will clear at_eol and reset the column position
+        assert l.nextch() == 'b'
+        assert l.column_position == 1
+        assert l.at_eol == False
