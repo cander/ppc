@@ -25,6 +25,7 @@ class LexerInput:
         self.current_char = self.in_file.read(1)
         if self.current_char == '':
             self.at_eof = True
+            self.at_eol = True # EOF is EOL, too
         else:
             self.column_position += 1
             if self.current_char == '\n':

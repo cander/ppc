@@ -26,6 +26,7 @@ class TestLexerInput:
         assert l.current_char == ''
         assert l.column_position == 2
         assert l.at_eof == True
+        assert l.at_eol == True
 
     def test_nextch_end_of_line(self):
         l = LexerInput(io.StringIO("a\nb"))
