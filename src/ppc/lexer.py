@@ -45,4 +45,41 @@ class LexerInput:
 class Symbol: pass
 
 
-class Lexer: pass
+class Lexer:
+    def __init__(self, lexer_input):
+        self.lexer_input = lexer_input
+
+    # https://homepages.cwi.nl/~steven/pascal/book/1lexical.html#insymbol
+    def insymbol(self):
+        self.skip_whitespace()
+        # check for EOF?
+
+        # classify
+        # see https://homepages.cwi.nl/~steven/pascal/book/9program.html#chartypes
+        ch = self.lexer_input.current_char
+        if ch.isalpha():
+            print("letter")
+            sym = self.keyword_or_ident()
+            # just return?
+        elif ch.isdigit():
+            print("digit")
+        # quote
+        # colon
+        # less than greater than
+
+
+    def skip_whitespace(self):
+        while self.lexer_input.current_char in [' ', '\t'] or self.lexer.at_eol:
+            self.lexer_input.nextch()
+
+    # get a keyword or identifier after seeing a letter
+    # https://homepages.cwi.nl/~steven/pascal/book/pcom.html#p408
+    def keyword_or_ident(self):
+        end_word = '.' # expand later
+        word = self.lexer_input.current_char
+        while self.lexer_input.nextch() not in end_word:
+            word += self.lexer_input.current_char
+
+        # look for keywords
+        return word
+

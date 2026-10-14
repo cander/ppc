@@ -1,5 +1,5 @@
 import pytest
-from ppc.lexer import LexerInput
+from ppc.lexer import Lexer, LexerInput
 
 import io
 
@@ -40,3 +40,13 @@ class TestLexerInput:
         assert l.nextch() == 'b'
         assert l.column_position == 1
         assert l.at_eol == False
+
+class TestLexer:
+    def test_keyword_or_ident(self):
+        li = LexerInput(io.StringIO("cat."))
+        li.nextch()
+        l = Lexer(li)
+        sy = l.keyword_or_ident()
+
+        assert(sy == "cat")
+
