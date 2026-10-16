@@ -5,7 +5,7 @@ from enum import Enum, auto
 # get truncated to fit within the maximum identifier length of 8 characters.
 # I'm following that without the truncation
 class SymType(Enum):
-    # KEYWORD = auto() # keywords aren't a type of symbol
+    # more to come for operators
     IDENTIFIER = auto()
     IFSY = auto()
     DOSY = auto()

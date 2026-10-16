@@ -41,7 +41,7 @@ class LexerInput:
         self.column_position = 0
         self.at_eol = False
 
-from ppc.symbol import Symbol, SymType
+from ppc.symbol import Symbol, SymType, reserve_to_sym
 
 class Lexer:
     def __init__(self, lexer_input):
@@ -80,5 +80,8 @@ class Lexer:
             word += self.lexer_input.current_char
 
         # look for keywords
-        return Symbol(word, SymType.IDENTIFIER)
+        if word in reserve_to_sym:
+            return Symbol(word, reserve_to_sym[word])
+        else:
+            return Symbol(word, SymType.IDENTIFIER)
 

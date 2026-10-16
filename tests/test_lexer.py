@@ -43,17 +43,26 @@ class TestLexerInput:
         assert l.at_eol == False
 
 class TestLexer:
+    # TODO: don't test keyword_or_ident
     def test_keyword_or_ident(self):
-        li = LexerInput(io.StringIO("cat.dog ="))
+        li = LexerInput(io.StringIO("cat.if ="))
         li.nextch()
         l = Lexer(li)
         sy = l.keyword_or_ident()
 
-        assert(sy.str_value == "cat")
         assert(sy.type == SymType.IDENTIFIER)
+        assert(sy.str_value == "cat")
 
         li.nextch() # consume end of word
         sy = l.keyword_or_ident()
-        assert(sy.str_value == "dog")
+        assert(sy.type == SymType.IFSY)
+        assert(sy.str_value == "if")
+
+        # try to trick it
+        li = LexerInput(io.StringIO("ify ="))
+        li.nextch()
+        l = Lexer(li)
+        sy = l.keyword_or_ident()
+        assert(sy.str_value == "ify")
         assert(sy.type == SymType.IDENTIFIER)
 
