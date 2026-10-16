@@ -1,5 +1,6 @@
 import pytest
-from ppc.lexer import Lexer, LexerInput, SymType
+from ppc.lexer import Lexer, LexerInput
+from ppc.symbol import SymType
 
 import io
 

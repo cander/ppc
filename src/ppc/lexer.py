@@ -41,18 +41,7 @@ class LexerInput:
         self.column_position = 0
         self.at_eol = False
 
-
-from enum import Enum, auto
-
-class SymType(Enum):
-    KEYWORD = auto() # keywords aren't a type of symbol
-    IDENTIFIER = auto()
-
-class Symbol:
-    def __init__(self, str_value: str, type: SymType):
-        self.str_value = str_value
-        self.type = type
-        # maybe track the location where we found this
+from ppc.symbol import Symbol, SymType
 
 class Lexer:
     def __init__(self, lexer_input):
