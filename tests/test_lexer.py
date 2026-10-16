@@ -1,5 +1,5 @@
 import pytest
-from ppc.lexer import Lexer, LexerInput
+from ppc.lexer import Lexer, LexerInput, SymType
 
 import io
 
@@ -48,9 +48,11 @@ class TestLexer:
         l = Lexer(li)
         sy = l.keyword_or_ident()
 
-        assert(sy == "cat")
+        assert(sy.str_value == "cat")
+        assert(sy.type == SymType.IDENTIFIER)
 
         li.nextch() # consume end of word
         sy = l.keyword_or_ident()
-        assert(sy == "dog")
+        assert(sy.str_value == "dog")
+        assert(sy.type == SymType.IDENTIFIER)
 

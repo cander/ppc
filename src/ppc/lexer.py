@@ -42,15 +42,24 @@ class LexerInput:
         self.at_eol = False
 
 
-class Symbol: pass
+from enum import Enum, auto
 
+class SymType(Enum):
+    KEYWORD = auto() # keywords aren't a type of symbol
+    IDENTIFIER = auto()
+
+class Symbol:
+    def __init__(self, str_value: str, type: SymType):
+        self.str_value = str_value
+        self.type = type
+        # maybe track the location where we found this
 
 class Lexer:
     def __init__(self, lexer_input):
         self.lexer_input = lexer_input
 
     # https://homepages.cwi.nl/~steven/pascal/book/1lexical.html#insymbol
-    def insymbol(self):
+    def insymbol(self) -> Symbol:
         self.skip_whitespace()
         # check for EOF?
 
@@ -74,7 +83,7 @@ class Lexer:
 
     # get a keyword or identifier after seeing a letter
     # https://homepages.cwi.nl/~steven/pascal/book/pcom.html#p408
-    def keyword_or_ident(self):
+    def keyword_or_ident(self) -> Symbol:
         word = self.lexer_input.current_char
         # assume identifiers can only be alphanumeric
         while self.lexer_input.nextch().isalnum():
@@ -82,5 +91,5 @@ class Lexer:
             word += self.lexer_input.current_char
 
         # look for keywords
-        return word # will return a symbol
+        return Symbol(word, SymType.IDENTIFIER)
 
