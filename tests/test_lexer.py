@@ -43,10 +43,14 @@ class TestLexerInput:
 
 class TestLexer:
     def test_keyword_or_ident(self):
-        li = LexerInput(io.StringIO("cat."))
+        li = LexerInput(io.StringIO("cat.dog ="))
         li.nextch()
         l = Lexer(li)
         sy = l.keyword_or_ident()
 
         assert(sy == "cat")
+
+        li.nextch() # consume end of word
+        sy = l.keyword_or_ident()
+        assert(sy == "dog")
 

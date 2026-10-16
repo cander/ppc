@@ -75,11 +75,12 @@ class Lexer:
     # get a keyword or identifier after seeing a letter
     # https://homepages.cwi.nl/~steven/pascal/book/pcom.html#p408
     def keyword_or_ident(self):
-        end_word = '.' # expand later
         word = self.lexer_input.current_char
-        while self.lexer_input.nextch() not in end_word:
+        # assume identifiers can only be alphanumeric
+        while self.lexer_input.nextch().isalnum():
+            # allowing identifiers to be unlimited length
             word += self.lexer_input.current_char
 
         # look for keywords
-        return word
+        return word # will return a symbol
 
