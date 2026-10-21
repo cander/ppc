@@ -4,7 +4,7 @@ class LexerInput:
     def __init__(self, in_file):
         # for the moment, assume these are pulic readable
         self.in_file = in_file
-        self.current_char = None
+        self.current_char = ' ' # prime the pump with space
         self.line_number = 0
         self.column_position = 0
         self.at_eol = False
@@ -17,7 +17,7 @@ class LexerInput:
     #     at_eol is True, the returned character is undefined,
     #     the line number is incremented, and the column position is reset
     # At end of file, at_eof is True, return ''
-    def nextch(self):
+    def nextch(self) -> str:
         if self.at_eol:
             self.process_eol()
         
@@ -50,24 +50,25 @@ class Lexer:
     # https://homepages.cwi.nl/~steven/pascal/book/1lexical.html#insymbol
     def insymbol(self) -> Symbol:
         self.skip_whitespace()
-        # check for EOF?
+        # check for EOF here?
 
         # classify
         # see https://homepages.cwi.nl/~steven/pascal/book/9program.html#chartypes
         ch = self.lexer_input.current_char
+        # print(f'insymbol starting at (after skipping whitespace): \'{ch}\'')
         if ch.isalpha():
-            print("letter")
             sym = self.keyword_or_ident()
             # just return?
+            return sym
         elif ch.isdigit():
             print("digit")
         # quote
         # colon
         # less than greater than
 
-
     def skip_whitespace(self):
-        while self.lexer_input.current_char in [' ', '\t'] or self.lexer.at_eol:
+        while self.lexer_input.current_char in [' ', '\t'] or \
+            self.lexer_input.at_eol:
             self.lexer_input.nextch()
 
     # get a keyword or identifier after seeing a letter

@@ -43,8 +43,29 @@ class TestLexerInput:
         assert l.at_eol == False
 
 class TestLexer:
-    # TODO: don't test keyword_or_ident
     def test_keyword_or_ident(self):
+        li = LexerInput(io.StringIO("cat.if ="))
+        l = Lexer(li)
+        sy = l.insymbol()
+
+        assert(sy.type == SymType.IDENTIFIER)
+        assert(sy.str_value == "cat")
+
+        li.nextch()   # kinda lame
+
+        sy = l.keyword_or_ident()
+        assert(sy.type == SymType.IFSY)
+        assert(sy.str_value == "if")
+
+        # try to trick it
+        li = LexerInput(io.StringIO("ify ="))
+        l = Lexer(li)
+        sy = l.insymbol()
+        assert(sy.type == SymType.IDENTIFIER)
+        assert(sy.str_value == "ify")
+
+    def test_keyword_or_ident_directly(self):
+        # arguably shouldn't test this, but that's how I started
         li = LexerInput(io.StringIO("cat.if ="))
         li.nextch()
         l = Lexer(li)
@@ -63,6 +84,6 @@ class TestLexer:
         li.nextch()
         l = Lexer(li)
         sy = l.keyword_or_ident()
-        assert(sy.str_value == "ify")
         assert(sy.type == SymType.IDENTIFIER)
+        assert(sy.str_value == "ify")
 
