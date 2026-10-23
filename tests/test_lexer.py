@@ -105,3 +105,9 @@ class TestLexer:
         assert(sy is None)
         assert(l.error_count() > 0) 
 
+    def test_empty_string(self):
+        l = Lexer(LexerInput(io.StringIO("''")))
+        sy = l.insymbol()
+        assert(sy is None)
+        assert(l.error_count() > 0) 
+

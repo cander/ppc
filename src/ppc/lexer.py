@@ -132,4 +132,13 @@ class Lexer:
                 self.lexer_input.nextch()
 
         # look for zero-length string
+        if literal == '':
+            self.error(205) # zero-length string
+            return None
+
+        # if the string is one character long, it's a character literal,
+        # but it's the same symbol type as a string literal -
+        # later code will just check the length. It seems like a
+        # character literal ought to be a different symbol type, but
+        # whatever.
         return Symbol(literal, SymType.STRINGCONST)
