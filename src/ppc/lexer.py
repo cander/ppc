@@ -34,7 +34,7 @@ class LexerInput:
         return self.current_char
 
     # This is not the same as - 
-    #    ttps://homepages.cwi.nl/~steven/pascal/book/1lexical.html#endofline 
+    # https://homepages.cwi.nl/~steven/pascal/book/1lexical.html#endofline 
     # We only care about our local state relating to eol
     def process_eol(self):
         self.line_number += 1
@@ -65,9 +65,15 @@ class Lexer:
             print("digit")
         # quote
         elif ch == "'":
-            sym = self.string_or_character_literal()
-            return sym
+            return self.string_or_character_literal()
         # colon
+        elif ch == ':':
+            ch = self.lexer_input.nextch()
+            if ch == '=':
+                self.lexer_input.nextch() # swallow the '='
+                return Symbol(":=", SymType.BECOMES)
+            else:
+                return Symbol(":", SymType.COLON)
         # less than greater than
 
     def skip_whitespace(self):

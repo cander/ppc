@@ -7,6 +7,7 @@ from enum import Enum, auto
 class SymType(Enum):
     # more to come for operators
     IDENTIFIER = auto()
+    # reserved words
     IFSY = auto()
     DOSY = auto()
     OFSY = auto()
@@ -43,6 +44,9 @@ class SymType(Enum):
     FUNCTIONSY = auto()
     PROCEDURESY = auto()
     STRINGCONST = auto()
+    # operators
+    COLON = auto()
+    BECOMES = auto()
 
 # map reserve words to SymTypes
 # This is basically handled with a small, fancy data structure at

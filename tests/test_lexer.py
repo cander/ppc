@@ -111,3 +111,12 @@ class TestLexer:
         assert(sy is None)
         assert(l.error_count() > 0) 
 
+    def test_colon(self):
+        l = Lexer(LexerInput(io.StringIO(": ")))
+        sy = l.insymbol()
+        assert(sy.type == SymType.COLON)
+
+    def test_colon_equals(self):
+        l = Lexer(LexerInput(io.StringIO(":= ")))
+        sy = l.insymbol()
+        assert(sy.type == SymType.BECOMES)
