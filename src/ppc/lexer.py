@@ -63,6 +63,9 @@ class Lexer:
         elif ch.isdigit():
             print("digit")
         # quote
+        elif ch == "'":
+            sym = self.string_or_character_literal()
+            return sym
         # colon
         # less than greater than
 
@@ -86,3 +89,28 @@ class Lexer:
         else:
             return Symbol(word, SymType.IDENTIFIER)
 
+    # String and character literals are both started with a single quote.
+    # A character literal is only one character long.
+    # String are longer than one character - no zero-length strings,
+    # And, embedded single quotes are represented by two single quotes in a row.
+    # Entry condition: current_char is a single quote
+    # Exit condition: current_char is past the closing single quote
+    # https://homepages.cwi.nl/~steven/pascal/book/pcom.html#p481
+    def string_or_character_literal(self) -> Symbol:
+        self.lexer_input.nextch() # skip the opening quote
+        literal = ''
+        while True:
+            ch = self.lexer_input.current_char
+            # watch for EOL
+            if ch == "'":
+                # check for embedded single quote
+                if self.lexer_input.nextch() == "'":
+                    literal += "'"
+                    self.lexer_input.nextch()
+                else:
+                    break
+            else:
+                literal += ch
+                self.lexer_input.nextch()
+
+        return Symbol(literal, SymType.STRINGCONST)

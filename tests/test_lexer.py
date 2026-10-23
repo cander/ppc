@@ -87,3 +87,9 @@ class TestLexer:
         assert(sy.type == SymType.IDENTIFIER)
         assert(sy.str_value == "ify")
 
+    def test_simple_string(self):
+        l = Lexer(LexerInput(io.StringIO("'hello'")))
+        sy = l.insymbol()
+        assert(sy.type == SymType.STRINGCONST)
+        assert(sy.str_value == "hello")
+

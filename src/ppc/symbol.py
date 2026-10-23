@@ -42,6 +42,7 @@ class SymType(Enum):
     PROGRAMSY = auto()
     FUNCTIONSY = auto()
     PROCEDURESY = auto()
+    STRINGCONST = auto()
 
 # map reserve words to SymTypes
 # This is basically handled with a small, fancy data structure at
