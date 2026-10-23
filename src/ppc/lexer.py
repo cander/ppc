@@ -5,7 +5,7 @@ class LexerInput:
         # for the moment, assume these are pulic readable
         self.in_file = in_file
         self.current_char = ' ' # prime the pump with space
-        self.line_number = 0
+        self.line_number = 1
         self.column_position = 0
         self.at_eol = False
         self.at_eof = False
@@ -46,6 +46,7 @@ from ppc.symbol import Symbol, SymType, reserve_to_sym
 class Lexer:
     def __init__(self, lexer_input):
         self.lexer_input = lexer_input
+        self.errors = []
 
     # https://homepages.cwi.nl/~steven/pascal/book/1lexical.html#insymbol
     def insymbol(self) -> Symbol:
@@ -73,6 +74,18 @@ class Lexer:
         while self.lexer_input.current_char in [' ', '\t'] or \
             self.lexer_input.at_eol:
             self.lexer_input.nextch()
+
+    # Record an error based on the error number.  The error numbers are defined in the Pascal standard.
+    # Not sure if this needs to be visible outside of th lexer.
+    # https://homepages.cwi.nl/~steven/pascal/book/pcom.html#p338
+    def error(self, ferrnr: int):
+        print(f"Error {ferrnr} at line {self.lexer_input.line_number}, column {self.lexer_input.column_position}")
+        # currently just use tuple - could be a class
+        self.errors.append((ferrnr, self.lexer_input.line_number, self.lexer_input.column_position))
+
+    def error_count(self) -> int:
+        # maybe only used for testing
+        return len(self.errors)
 
     # get a keyword or identifier after seeing a letter
     # https://homepages.cwi.nl/~steven/pascal/book/pcom.html#p408
@@ -102,6 +115,11 @@ class Lexer:
         while True:
             ch = self.lexer_input.current_char
             # watch for EOL
+            if self.lexer_input.at_eol:
+                # not sure if this is the right way to handle this
+                # original code doesn't look like it breaks out code when it sees this
+                self.error(202) # string literal not terminated
+                return None
             if ch == "'":
                 # check for embedded single quote
                 if self.lexer_input.nextch() == "'":
@@ -113,4 +131,5 @@ class Lexer:
                 literal += ch
                 self.lexer_input.nextch()
 
+        # look for zero-length string
         return Symbol(literal, SymType.STRINGCONST)

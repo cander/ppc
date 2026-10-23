@@ -93,3 +93,15 @@ class TestLexer:
         assert(sy.type == SymType.STRINGCONST)
         assert(sy.str_value == "hello")
 
+    def test_string_with_embedded_quotes(self):
+        l = Lexer(LexerInput(io.StringIO("'''hello'''")))
+        sy = l.insymbol()
+        assert(sy.type == SymType.STRINGCONST)
+        assert(sy.str_value == "'hello'")
+
+    def test_unclosed_string(self):
+        l = Lexer(LexerInput(io.StringIO("'hello")))
+        sy = l.insymbol()
+        assert(sy is None)
+        assert(l.error_count() > 0) 
+
