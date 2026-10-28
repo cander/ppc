@@ -48,6 +48,11 @@ class Lexer:
         self.lexer_input = lexer_input
         self.errors = []
 
+    # wrappers around FileInput to reduce Demeter violations
+    def nextch(self):
+        return self.lexer_input.nextch()
+
+
     # https://homepages.cwi.nl/~steven/pascal/book/1lexical.html#insymbol
     def insymbol(self) -> Symbol:
         self.skip_whitespace()
@@ -68,9 +73,9 @@ class Lexer:
             return self.string_or_character_literal()
         # colon
         elif ch == ':':
-            ch = self.lexer_input.nextch()
+            ch = self.nextch()
             if ch == '=':
-                self.lexer_input.nextch() # swallow the '='
+                self.nextch() # swallow the '='
                 return Symbol(":=", SymType.BECOMES)
             else:
                 return Symbol(":", SymType.COLON)
@@ -79,7 +84,7 @@ class Lexer:
     def skip_whitespace(self):
         while self.lexer_input.current_char in [' ', '\t'] or \
             self.lexer_input.at_eol:
-            self.lexer_input.nextch()
+            self.nextch()
 
     # Record an error based on the error number.  The error numbers are defined in the Pascal standard.
     # Not sure if this needs to be visible outside of th lexer.
@@ -98,7 +103,7 @@ class Lexer:
     def keyword_or_ident(self) -> Symbol:
         word = self.lexer_input.current_char
         # assume identifiers can only be alphanumeric
-        while self.lexer_input.nextch().isalnum():
+        while self.nextch().isalnum():
             # allowing identifiers to be unlimited length
             word += self.lexer_input.current_char
 
@@ -116,7 +121,7 @@ class Lexer:
     # Exit condition: current_char is past the closing single quote
     # https://homepages.cwi.nl/~steven/pascal/book/pcom.html#p481
     def string_or_character_literal(self) -> Symbol:
-        self.lexer_input.nextch() # skip the opening quote
+        self.nextch() # skip the opening quote
         literal = ''
         while True:
             ch = self.lexer_input.current_char
@@ -128,14 +133,14 @@ class Lexer:
                 return None
             if ch == "'":
                 # check for embedded single quote
-                if self.lexer_input.nextch() == "'":
+                if self.nextch() == "'":
                     literal += "'"
-                    self.lexer_input.nextch()
+                    self.nextch()
                 else:
                     break
             else:
                 literal += ch
-                self.lexer_input.nextch()
+                self.nextch()
 
         # look for zero-length string
         if literal == '':
