@@ -52,6 +52,12 @@ class Lexer:
     def nextch(self):
         return self.lexer_input.nextch()
 
+    def current_char(self):
+        return self.lexer_input.current_char
+
+    def at_eol(self):
+        return self.lexer_input.at_eol
+
 
     # https://homepages.cwi.nl/~steven/pascal/book/1lexical.html#insymbol
     def insymbol(self) -> Symbol:
@@ -60,7 +66,7 @@ class Lexer:
 
         # classify
         # see https://homepages.cwi.nl/~steven/pascal/book/9program.html#chartypes
-        ch = self.lexer_input.current_char
+        ch = self.current_char()
         # print(f'insymbol starting at (after skipping whitespace): \'{ch}\'')
         if ch.isalpha():
             sym = self.keyword_or_ident()
@@ -82,8 +88,8 @@ class Lexer:
         # less than greater than
 
     def skip_whitespace(self):
-        while self.lexer_input.current_char in [' ', '\t'] or \
-            self.lexer_input.at_eol:
+        while self.current_char() in [' ', '\t'] or \
+            self.at_eol():
             self.nextch()
 
     # Record an error based on the error number.  The error numbers are defined in the Pascal standard.
@@ -101,11 +107,11 @@ class Lexer:
     # get a keyword or identifier after seeing a letter
     # https://homepages.cwi.nl/~steven/pascal/book/pcom.html#p408
     def keyword_or_ident(self) -> Symbol:
-        word = self.lexer_input.current_char
+        word = self.current_char()
         # assume identifiers can only be alphanumeric
         while self.nextch().isalnum():
             # allowing identifiers to be unlimited length
-            word += self.lexer_input.current_char
+            word += self.current_char()
 
         # look for keywords
         if word in reserve_to_sym:
@@ -124,9 +130,9 @@ class Lexer:
         self.nextch() # skip the opening quote
         literal = ''
         while True:
-            ch = self.lexer_input.current_char
+            ch = self.current_char()
             # watch for EOL
-            if self.lexer_input.at_eol:
+            if self.at_eol():
                 # not sure if this is the right way to handle this
                 # original code doesn't look like it breaks out code when it sees this
                 self.error(202) # string literal not terminated
