@@ -137,3 +137,10 @@ class TestLexer:
         l = Lexer(LexerInput(io.StringIO(":= ")))
         sy = l.insymbol()
         assert(sy.type == SymType.BECOMES)
+
+    def test_integer_literal(self):
+        l = Lexer(LexerInput(io.StringIO("12345 ")))
+        sy = l.insymbol()
+        assert(sy.type == SymType.INTCONST)
+        assert(sy.str_value == "12345")
+        assert(sy.actual_value == 12345)

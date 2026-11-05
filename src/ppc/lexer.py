@@ -78,6 +78,8 @@ class Lexer:
             return sym
         elif ch.isdigit():
             print("digit")
+            sym = self.number_literal()
+            return sym
         # quote
         elif ch == "'":
             return self.string_or_character_literal()
@@ -168,3 +170,14 @@ class Lexer:
         # character literal ought to be a different symbol type, but
         # whatever.
         return Symbol(literal, SymType.STRINGCONST)
+
+    # https://homepages.cwi.nl/~steven/pascal/book/pcom.html#p426
+    def number_literal(self) -> Symbol:
+        # integer portion
+        num_str = ''
+        # worry about maximum length?
+        while self.current_char().isdigit():
+            num_str += self.current_char()
+            self.nextch()
+        # look for decimal point and scientific notation
+        return Symbol(num_str, SymType.INTCONST, int(num_str))

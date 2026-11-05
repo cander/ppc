@@ -43,7 +43,10 @@ class SymType(Enum):
     PROGRAMSY = auto()
     FUNCTIONSY = auto()
     PROCEDURESY = auto()
+
+    INTCONST = auto()
     STRINGCONST = auto()
+
     # operators
     COLON = auto()
     BECOMES = auto()
@@ -91,7 +94,8 @@ reserve_to_sym = {
 }
 
 class Symbol:
-    def __init__(self, str_value: str, type: SymType):
+    def __init__(self, str_value: str, type: SymType, actual_value=None):
         self.str_value = str_value
         self.type = type
+        self.actual_value = actual_value
         # maybe track the location where we found this
