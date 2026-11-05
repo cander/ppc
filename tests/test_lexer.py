@@ -43,6 +43,23 @@ class TestLexerInput:
         assert l.at_eol == False
 
 class TestLexer:
+    # need more testing of nextch?
+    def test_nextch_end_of_line(self):
+        l = Lexer(LexerInput(io.StringIO("a\nb")))
+        assert l.at_eol() == False
+        assert l.nextch() == 'a'
+
+        l.error(123)
+        assert l.error_count() == 1
+
+        l.nextch()  # don't care about returned character
+        assert l.at_eol() == True
+
+        # next call will clear at_eol and reset the errors
+        assert l.nextch() == 'b'
+        assert l.error_count() == 0
+        assert l.at_eol() == False
+
     def test_keyword_or_ident(self):
         li = LexerInput(io.StringIO("cat.if ="))
         l = Lexer(li)
@@ -103,7 +120,7 @@ class TestLexer:
         l = Lexer(LexerInput(io.StringIO("'hello")))
         sy = l.insymbol()
         assert(sy is None)
-        assert(l.error_count() > 0) 
+        assert(l.error_count() > 0)  # could test error number
 
     def test_empty_string(self):
         l = Lexer(LexerInput(io.StringIO("''")))

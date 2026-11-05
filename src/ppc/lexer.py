@@ -50,14 +50,18 @@ class Lexer:
 
     # wrappers around FileInput to reduce Demeter violations
     def nextch(self):
+        if self.at_eol():
+            # maybe we want our own process_eol method?
+            self.print_errors()
+            self.lexer_input.process_eol()
+
         return self.lexer_input.nextch()
 
     def current_char(self):
         return self.lexer_input.current_char
 
-    def at_eol(self):
+    def at_eol(self) -> bool:
         return self.lexer_input.at_eol
-
 
     # https://homepages.cwi.nl/~steven/pascal/book/1lexical.html#insymbol
     def insymbol(self) -> Symbol:
@@ -96,13 +100,18 @@ class Lexer:
     # Not sure if this needs to be visible outside of th lexer.
     # https://homepages.cwi.nl/~steven/pascal/book/pcom.html#p338
     def error(self, ferrnr: int):
-        print(f"Error {ferrnr} at line {self.lexer_input.line_number}, column {self.lexer_input.column_position}")
+        # print(f"Error {ferrnr} at line {self.lexer_input.line_number}, column {self.lexer_input.column_position}")
         # currently just use tuple - could be a class
         self.errors.append((ferrnr, self.lexer_input.line_number, self.lexer_input.column_position))
 
     def error_count(self) -> int:
         # maybe only used for testing
         return len(self.errors)
+
+    def print_errors(self):
+        for err in self.errors:
+            print(f"Error {err[0]} at line {err[1]}, column {err[2]}")
+        self.errors = []
 
     # get a keyword or identifier after seeing a letter
     # https://homepages.cwi.nl/~steven/pascal/book/pcom.html#p408
