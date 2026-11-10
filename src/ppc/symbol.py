@@ -45,6 +45,7 @@ class SymType(Enum):
     PROCEDURESY = auto()
 
     INTCONST = auto()
+    REALCONST = auto()
     STRINGCONST = auto()
 
     # operators

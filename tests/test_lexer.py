@@ -144,3 +144,10 @@ class TestLexer:
         assert(sy.type == SymType.INTCONST)
         assert(sy.str_value == "12345")
         assert(sy.actual_value == 12345)
+
+    def test_real_literal(self):
+        l = Lexer(LexerInput(io.StringIO("123.45 ")))
+        sy = l.insymbol()
+        assert(sy.type == SymType.REALCONST)
+        assert(sy.str_value == "123.45")
+        assert(sy.actual_value == 123.45)

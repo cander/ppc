@@ -174,10 +174,27 @@ class Lexer:
     # https://homepages.cwi.nl/~steven/pascal/book/pcom.html#p426
     def number_literal(self) -> Symbol:
         # integer portion
+        int_str = self.collect_digits()
+        # look for decimal point and scientific notation
+        if self.current_char() == '.':
+            # looks like a real number,
+            # but could be a range operator - later
+            ch = self.nextch()
+            if ch.isdigit():
+                frac_str = self.collect_digits()
+                float_str = int_str + '.' + frac_str
+                return Symbol(float_str, SymType.REALCONST, float(float_str))
+            # look for scientific notation - later
+        else:
+            return Symbol(int_str, SymType.INTCONST, int(int_str))
+
+    # Assume we're sitting on a digit, collect all the following
+    # digits for some sort of integer
+    def collect_digits(self) -> str:
         num_str = ''
         # worry about maximum length?
         while self.current_char().isdigit():
             num_str += self.current_char()
             self.nextch()
-        # look for decimal point and scientific notation
-        return Symbol(num_str, SymType.INTCONST, int(num_str))
+
+        return num_str
