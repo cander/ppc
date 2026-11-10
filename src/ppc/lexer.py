@@ -185,6 +185,9 @@ class Lexer:
                 float_str = int_str + '.' + frac_str
                 return Symbol(float_str, SymType.REALCONST, float(float_str))
             # look for scientific notation - later
+            else:
+                # must be at least one digit after the decimal point to be a real number
+                self.error(201) # real number not terminated
         else:
             return Symbol(int_str, SymType.INTCONST, int(int_str))
 

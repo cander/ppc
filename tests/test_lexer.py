@@ -146,8 +146,13 @@ class TestLexer:
         assert(sy.actual_value == 12345)
 
     def test_real_literal(self):
-        l = Lexer(LexerInput(io.StringIO("123.45 ")))
+        l = Lexer(LexerInput(io.StringIO("123.45 67. ")))
         sy = l.insymbol()
         assert(sy.type == SymType.REALCONST)
         assert(sy.str_value == "123.45")
         assert(sy.actual_value == 123.45)
+
+        # must include a digit after the decimal point to be a real number
+        sy = l.insymbol()
+        assert(sy is None)
+        assert(l.error_count() > 0) 
