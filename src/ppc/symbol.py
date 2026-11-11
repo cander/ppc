@@ -100,3 +100,6 @@ class Symbol:
         self.type = type
         self.actual_value = actual_value
         # maybe track the location where we found this
+    
+    def __str__(self):
+        return f"Symbol({self.str_value}, {self.type}, {self.actual_value})"

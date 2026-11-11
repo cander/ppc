@@ -94,7 +94,6 @@ class Lexer:
             # just return?
             return sym
         elif ch.isdigit():
-            print("digit")
             sym = self.number_literal()
             return sym
         # quote
@@ -194,25 +193,32 @@ class Lexer:
         # integer portion
         int_str = self.collect_digits()
         # look for decimal point and scientific notation
-        if self.current_char() == '.':
-            if self.peekch() == '.':
+        if self.current_char() == '.' and self.peekch() == '.':
                 # range operator, not a real number
                 # leaving the state such that current_char is dot and 
                 # the next char is dot, too, so we can recognize ".."
                 return Symbol(int_str, SymType.INTCONST, int(int_str))  
 
+        if self.current_char() == '.':
             ch = self.nextch()
             if ch.isdigit():
                 frac_str = self.collect_digits()
                 float_str = int_str + '.' + frac_str
+                # look for scientific notation
+                if self.current_char() == 'e':
+                    float_str += self.collect_exponent()
                 return Symbol(float_str, SymType.REALCONST, float(float_str))
-            # look for scientific notation - later
             else:
                 # must be at least one digit after the decimal point to be a real number
                 self.error(201) # real number not terminated
         else:
-            # note: real can be int E [+|-] int
-            return Symbol(int_str, SymType.INTCONST, int(int_str))
+            # no decimal point, but could be scientific notation, which makes
+            # it a real number.
+            if self.current_char() == 'e':
+                float_str = int_str + self.collect_exponent()
+                return Symbol(float_str, SymType.REALCONST, float(float_str))
+            else:
+                return Symbol(int_str, SymType.INTCONST, int(int_str))
 
     # Assume we're sitting on a digit, collect all the following
     # digits for some sort of integer
@@ -224,3 +230,21 @@ class Lexer:
             self.nextch()
 
         return num_str
+
+    # Assume we're sitting on the 'e' of a real number, collect the exponent
+    # Return empty if there's an error, which will bugger the real number
+    # that the lexer finds, but it's an error - accuracy won't matter
+    def collect_exponent(self) -> str:
+        exp_str = self.current_char() # should be 'e'
+        self.nextch()
+        if self.current_char() in ['+', '-']:
+            exp_str += self.current_char()
+            self.nextch()
+
+        if self.current_char().isdigit():
+            exp_str += self.collect_digits()
+        else:
+            self.error(201) # no digits after 'e'
+            exp_str = ''
+
+        return exp_str

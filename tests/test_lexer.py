@@ -190,4 +190,24 @@ class TestLexer:
         # must include a digit after the decimal point to be a real number
         sy = l.insymbol()
         assert sy is None
-        assert l.error_count() > 0
+        assert l.error_count() == 1
+
+    def test_real_literal_with_exponent(self):
+        l = Lexer(LexerInput(io.StringIO("123.45e-6 67e+3  13e  66.6e+ ")))
+        sy = l.insymbol()
+        assert sy.type == SymType.REALCONST
+        assert sy.str_value == "123.45e-6"
+        assert sy.actual_value == 0.00012345
+
+        sy = l.insymbol()
+        assert sy.type == SymType.REALCONST
+        assert sy.str_value == "67e+3"
+        assert sy.actual_value == 67000
+
+        sy = l.insymbol()
+        assert sy.type == SymType.REALCONST  # details of real are undefined,
+        assert l.error_count() == 1
+
+        sy = l.insymbol()
+        assert sy.type == SymType.REALCONST  # details of real are undefined,
+        assert l.error_count() == 2
