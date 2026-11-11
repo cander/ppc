@@ -90,21 +90,21 @@ class TestLexer:
         l = Lexer(li)
         sy = l.insymbol()
 
-        assert(sy.type == SymType.IDENTIFIER)
-        assert(sy.str_value == "cat")
+        assert sy.type == SymType.IDENTIFIER
+        assert sy.str_value == "cat"
 
         li.nextch()   # kinda lame
 
         sy = l.keyword_or_ident()
-        assert(sy.type == SymType.IFSY)
-        assert(sy.str_value == "if")
+        assert sy.type == SymType.IFSY
+        assert sy.str_value == "if"
 
         # try to trick it
         li = LexerInput(io.StringIO("ify ="))
         l = Lexer(li)
         sy = l.insymbol()
-        assert(sy.type == SymType.IDENTIFIER)
-        assert(sy.str_value == "ify")
+        assert sy.type == SymType.IDENTIFIER
+        assert sy.str_value == "ify"
 
     def test_keyword_or_ident_directly(self):
         # arguably shouldn't test this, but that's how I started
@@ -113,81 +113,81 @@ class TestLexer:
         l = Lexer(li)
         sy = l.keyword_or_ident()
 
-        assert(sy.type == SymType.IDENTIFIER)
-        assert(sy.str_value == "cat")
+        assert sy.type == SymType.IDENTIFIER
+        assert sy.str_value == "cat"
 
         li.nextch() # consume end of word
         sy = l.keyword_or_ident()
-        assert(sy.type == SymType.IFSY)
-        assert(sy.str_value == "if")
+        assert sy.type == SymType.IFSY
+        assert sy.str_value == "if"
 
         # try to trick it
         li = LexerInput(io.StringIO("ify ="))
         li.nextch()
         l = Lexer(li)
         sy = l.keyword_or_ident()
-        assert(sy.type == SymType.IDENTIFIER)
-        assert(sy.str_value == "ify")
+        assert sy.type == SymType.IDENTIFIER
+        assert sy.str_value == "ify"
 
     def test_simple_string(self):
         l = Lexer(LexerInput(io.StringIO("'hello'")))
         sy = l.insymbol()
-        assert(sy.type == SymType.STRINGCONST)
-        assert(sy.str_value == "hello")
+        assert sy.type == SymType.STRINGCONST
+        assert sy.str_value == "hello"
 
     def test_string_with_embedded_quotes(self):
         l = Lexer(LexerInput(io.StringIO("'''hello'''")))
         sy = l.insymbol()
-        assert(sy.type == SymType.STRINGCONST)
-        assert(sy.str_value == "'hello'")
+        assert sy.type == SymType.STRINGCONST
+        assert sy.str_value == "'hello'"
 
     def test_unclosed_string(self):
         l = Lexer(LexerInput(io.StringIO("'hello")))
         sy = l.insymbol()
-        assert(sy is None)
-        assert(l.error_count() > 0)  # could test error number
+        assert sy is None
+        assert l.error_count() > 0  # could test error number
 
     def test_empty_string(self):
         l = Lexer(LexerInput(io.StringIO("''")))
         sy = l.insymbol()
-        assert(sy is None)
-        assert(l.error_count() > 0) 
+        assert sy is None
+        assert l.error_count() > 0
 
     def test_colon(self):
         l = Lexer(LexerInput(io.StringIO(": ")))
         sy = l.insymbol()
-        assert(sy.type == SymType.COLON)
+        assert sy.type == SymType.COLON
 
     def test_colon_equals(self):
         l = Lexer(LexerInput(io.StringIO(":= ")))
         sy = l.insymbol()
-        assert(sy.type == SymType.BECOMES)
+        assert sy.type == SymType.BECOMES
 
     def test_integer_literal(self):
         l = Lexer(LexerInput(io.StringIO("12345 ")))
         sy = l.insymbol()
-        assert(sy.type == SymType.INTCONST)
-        assert(sy.str_value == "12345")
-        assert(sy.actual_value == 12345)
+        assert sy.type == SymType.INTCONST
+        assert sy.str_value == "12345"
+        assert sy.actual_value == 12345
 
     def test_integer_literal_in_range(self):
         l = Lexer(LexerInput(io.StringIO("12..34 ")))
         sy = l.insymbol()
-        assert(sy.type == SymType.INTCONST)
-        assert(sy.str_value == "12")
-        assert(sy.actual_value == 12)
+        assert sy.type == SymType.INTCONST
+        assert sy.str_value == "12"
+        assert sy.actual_value == 12
         # the next two characters are ".."
-        assert(l.current_char() == '.')
-        assert(l.peekch() == '.')
+        assert l.current_char() == '.'
+        assert l.peekch() == '.'
 
     def test_real_literal(self):
         l = Lexer(LexerInput(io.StringIO("123.45 67. ")))
         sy = l.insymbol()
-        assert(sy.type == SymType.REALCONST)
-        assert(sy.str_value == "123.45")
-        assert(sy.actual_value == 123.45)
+        assert sy.type == SymType.REALCONST
+        assert sy.str_value == "123.45"
+        assert sy.actual_value == 123.45
 
         # must include a digit after the decimal point to be a real number
         sy = l.insymbol()
-        assert(sy is None)
-        assert(l.error_count() > 0) 
+        assert sy is None
+        assert l.error_count() > 0
