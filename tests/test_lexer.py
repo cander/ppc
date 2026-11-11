@@ -170,6 +170,16 @@ class TestLexer:
         assert(sy.str_value == "12345")
         assert(sy.actual_value == 12345)
 
+    def test_integer_literal_in_range(self):
+        l = Lexer(LexerInput(io.StringIO("12..34 ")))
+        sy = l.insymbol()
+        assert(sy.type == SymType.INTCONST)
+        assert(sy.str_value == "12")
+        assert(sy.actual_value == 12)
+        # the next two characters are ".."
+        assert(l.current_char() == '.')
+        assert(l.peekch() == '.')
+
     def test_real_literal(self):
         l = Lexer(LexerInput(io.StringIO("123.45 67. ")))
         sy = l.insymbol()

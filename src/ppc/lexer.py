@@ -77,6 +77,9 @@ class Lexer:
     def at_eol(self) -> bool:
         return self.lexer_input.at_eol
 
+    def peekch(self):
+        return self.lexer_input.peekch()
+
     # https://homepages.cwi.nl/~steven/pascal/book/1lexical.html#insymbol
     def insymbol(self) -> Symbol:
         self.skip_whitespace()
@@ -192,20 +195,18 @@ class Lexer:
         int_str = self.collect_digits()
         # look for decimal point and scientific notation
         if self.current_char() == '.':
-            # looks like a real number,
-            # but could be a range operator - later
-            # requires peeking at the next character to see if it's another .
-            # if we peek and see another ., then it's a range operator, so
-            # return the integer portion as an integer literal, leaving
-            # the current . and the peeked . for the next insymbol call to
-            # handle as a range operator/../:.
+            if self.peekch() == '.':
+                # range operator, not a real number
+                # leaving the state such that current_char is dot and 
+                # the next char is dot, too, so we can recognize ".."
+                return Symbol(int_str, SymType.INTCONST, int(int_str))  
+
             ch = self.nextch()
             if ch.isdigit():
                 frac_str = self.collect_digits()
                 float_str = int_str + '.' + frac_str
                 return Symbol(float_str, SymType.REALCONST, float(float_str))
             # look for scientific notation - later
-            # note: real can be real E [+|-] int
             else:
                 # must be at least one digit after the decimal point to be a real number
                 self.error(201) # real number not terminated
