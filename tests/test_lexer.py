@@ -42,6 +42,31 @@ class TestLexerInput:
         assert l.column_position == 1
         assert l.at_eol == False
 
+    def test_peekch(self):
+        l = LexerInput(io.StringIO("abcd"))
+        assert l.peekch() == 'a'
+        assert l.peekch() == 'a'  # peek again
+        assert l.nextch() == 'a'  # consume the character
+        assert l.nextch() == 'b'  # consume the character
+        assert l.peekch() == 'c'
+
+    def test_peekch_end_of_line(self):
+        l = LexerInput(io.StringIO("a\nb"))
+        assert l.at_eol == False
+        assert l.nextch() == 'a'
+
+        assert l.peekch() is not None
+        assert l.at_eol == False
+
+        l.nextch()  # consume newline
+        assert l.at_eol == True
+
+        # next call will clear at_eol and reset the column position
+        assert l.nextch() == 'b'
+        assert l.column_position == 1
+        assert l.at_eol == False
+
+
 class TestLexer:
     # need more testing of nextch?
     def test_nextch_end_of_line(self):

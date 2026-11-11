@@ -5,6 +5,7 @@ class LexerInput:
         # for the moment, assume these are pulic readable
         self.in_file = in_file
         self.current_char = ' ' # prime the pump with space
+        self.peek_char = None
         self.line_number = 1
         self.column_position = 0
         self.at_eol = False
@@ -22,7 +23,12 @@ class LexerInput:
             self.process_eol()
         
         # if we cared about performance, maybe we'd read a line at a time
-        self.current_char = self.in_file.read(1)
+        if self.peek_char is not None:
+            self.current_char = self.peek_char
+            self.peek_char = None
+        else:
+            self.current_char = self.in_file.read(1)
+
         if self.current_char == '':
             self.at_eof = True
             self.at_eol = True # EOF is EOL, too
@@ -33,8 +39,16 @@ class LexerInput:
 
         return self.current_char
 
-    # This is not the same as - 
-    # https://homepages.cwi.nl/~steven/pascal/book/1lexical.html#endofline 
+    # Peek at the next character in the input stream without consuming it.
+    # This is like input^ in Pascal
+    def peekch(self) -> str:
+        if self.peek_char is None:
+            self.peek_char = self.in_file.read(1)
+
+        return self.peek_char
+
+    # This is not the same as -
+    # https://homepages.cwi.nl/~steven/pascal/book/1lexical.html#endofline
     # We only care about our local state relating to eol
     def process_eol(self):
         self.line_number += 1
@@ -171,6 +185,7 @@ class Lexer:
         # whatever.
         return Symbol(literal, SymType.STRINGCONST)
 
+    # TBD: is plus/minus in front of literal handled here?
     # https://homepages.cwi.nl/~steven/pascal/book/pcom.html#p426
     def number_literal(self) -> Symbol:
         # integer portion
@@ -179,16 +194,23 @@ class Lexer:
         if self.current_char() == '.':
             # looks like a real number,
             # but could be a range operator - later
+            # requires peeking at the next character to see if it's another .
+            # if we peek and see another ., then it's a range operator, so
+            # return the integer portion as an integer literal, leaving
+            # the current . and the peeked . for the next insymbol call to
+            # handle as a range operator/../:.
             ch = self.nextch()
             if ch.isdigit():
                 frac_str = self.collect_digits()
                 float_str = int_str + '.' + frac_str
                 return Symbol(float_str, SymType.REALCONST, float(float_str))
             # look for scientific notation - later
+            # note: real can be real E [+|-] int
             else:
                 # must be at least one digit after the decimal point to be a real number
                 self.error(201) # real number not terminated
         else:
+            # note: real can be int E [+|-] int
             return Symbol(int_str, SymType.INTCONST, int(int_str))
 
     # Assume we're sitting on a digit, collect all the following
