@@ -153,16 +153,6 @@ class TestLexer:
         assert sy is None
         assert l.error_count() > 0
 
-    def test_colon(self):
-        l = Lexer(LexerInput(io.StringIO(": ")))
-        sy = l.insymbol()
-        assert sy.type == SymType.COLON
-
-    def test_colon_equals(self):
-        l = Lexer(LexerInput(io.StringIO(":= ")))
-        sy = l.insymbol()
-        assert sy.type == SymType.BECOMES
-
     def test_integer_literal(self):
         l = Lexer(LexerInput(io.StringIO("12345 ")))
         sy = l.insymbol()
@@ -211,3 +201,24 @@ class TestLexer:
         sy = l.insymbol()
         assert sy.type == SymType.REALCONST  # details of real are undefined,
         assert l.error_count() == 2
+
+class TestLexerSymbols:
+    def test_colon(self):
+        l = Lexer(LexerInput(io.StringIO(": ")))
+        sy = l.insymbol()
+        assert sy.type == SymType.COLON
+
+    def test_colon_equals(self):
+        l = Lexer(LexerInput(io.StringIO(":= ")))
+        sy = l.insymbol()
+        assert sy.type == SymType.BECOMES   
+
+    def test_dot_dot_range(self):
+        l = Lexer(LexerInput(io.StringIO(".. ")))
+        sy = l.insymbol()
+        assert sy.type == SymType.COLON
+
+    def test_dot_something_else(self):
+        l = Lexer(LexerInput(io.StringIO(".x ")))
+        sy = l.insymbol()
+        assert sy.type == SymType.PERIOD

@@ -51,6 +51,7 @@ class SymType(Enum):
     # operators
     COLON = auto()
     BECOMES = auto()
+    PERIOD = auto()
 
 # map reserve words to SymTypes
 # This is basically handled with a small, fancy data structure at

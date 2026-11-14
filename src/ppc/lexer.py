@@ -100,7 +100,7 @@ class Lexer:
         elif ch == "'":
             return self.string_or_character_literal()
         # operators/symbols - special characters
-        elif ch in ':':
+        elif ch in ':.':
             return self.symbol_operator(ch)
 
     def skip_whitespace(self):
@@ -181,15 +181,33 @@ class Lexer:
         # whatever.
         return Symbol(literal, SymType.STRINGCONST)
 
+    # Called when we've seen a speical character (e.g., punctuation) that
+    # we recognize as an operator or similar
+    # Similar to https://homepages.cwi.nl/~steven/pascal/book/pcom.html#p503
     def symbol_operator(self, ch) -> Symbol:
-        if ch == ':':
-            ch = self.nextch()
-            if ch == '=':
-                self.nextch() # swallow the '='
-                return Symbol(":=", SymType.BECOMES)
-            else:
-                return Symbol(":", SymType.COLON)
-        # less than greater than
+        # Todo: there is a variable called op that we should be setting
+        match ch:
+            case  ':':
+                ch = self.nextch()
+                if ch == '=':
+                    self.nextch() # swallow the '='
+                    return Symbol(":=", SymType.BECOMES)
+                else:
+                    return Symbol(":", SymType.COLON)
+            # period
+            case '.':
+                ch= self.nextch()
+                if ch == '.':
+                    # for some reason, .. is colon
+                    return Symbol(":", SymType.COLON)
+                else:
+                    return Symbol(".", SymType.PERIOD)
+            # less than
+            # greater than
+            # lparen
+            # special
+            case _:
+                print(f"Unexpected character: {ch} found in symb_operator")
 
     # TBD: is plus/minus in front of literal handled here?
     # https://homepages.cwi.nl/~steven/pascal/book/pcom.html#p426
