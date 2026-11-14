@@ -99,15 +99,9 @@ class Lexer:
         # quote
         elif ch == "'":
             return self.string_or_character_literal()
-        # colon
-        elif ch == ':':
-            ch = self.nextch()
-            if ch == '=':
-                self.nextch() # swallow the '='
-                return Symbol(":=", SymType.BECOMES)
-            else:
-                return Symbol(":", SymType.COLON)
-        # less than greater than
+        # operators/symbols - special characters
+        elif ch in ':':
+            return self.symbol_operator(ch)
 
     def skip_whitespace(self):
         while self.current_char() in [' ', '\t'] or \
@@ -186,6 +180,16 @@ class Lexer:
         # character literal ought to be a different symbol type, but
         # whatever.
         return Symbol(literal, SymType.STRINGCONST)
+
+    def symbol_operator(self, ch) -> Symbol:
+        if ch == ':':
+            ch = self.nextch()
+            if ch == '=':
+                self.nextch() # swallow the '='
+                return Symbol(":=", SymType.BECOMES)
+            else:
+                return Symbol(":", SymType.COLON)
+        # less than greater than
 
     # TBD: is plus/minus in front of literal handled here?
     # https://homepages.cwi.nl/~steven/pascal/book/pcom.html#p426
