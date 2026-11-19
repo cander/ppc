@@ -52,6 +52,8 @@ class SymType(Enum):
     COLON = auto()
     BECOMES = auto()
     PERIOD = auto()
+    MULOP = auto()
+    ADDOP = auto()
 
 # map reserve words to SymTypes
 # This is basically handled with a small, fancy data structure at
@@ -93,6 +95,49 @@ reserve_to_sym = {
     'program'  : SymType.PROGRAMSY,
     'function' : SymType.FUNCTIONSY,
     'procedure': SymType.PROCEDURESY,
+}
+
+character_to_sym = {
+    # ssy['+'] := addop ;   ssy['-'] := addop;    ssy['*'] := mulop;
+    #        ssy['/'] := mulop ;   ssy['('] := lparent;  ssy[')'] := rparent;
+    #        ssy['$'] := othersy ; ssy['='] := relop;    ssy[' '] := othersy;
+    #        ssy[','] := comma ;   ssy['.'] := period;   ssy['''']:= othersy;
+    #        ssy['['] := lbrack ;  ssy[']'] := rbrack;   ssy[':'] := colon;
+    #        ssy['^'] := arrow ;   ssy['<'] := relop;    ssy['>'] := relop;
+    #        ssy[';'] := semicolon;
+    '*': SymType.MULOP,
+    '/': SymType.MULOP,
+    '+': SymType.ADDOP,
+    '-': SymType.ADDOP,
+}
+
+class Operator(Enum):
+    MUL = auto()
+    IDI = auto()
+    RDIV = auto()
+    IMOD = auto()
+    PLUS = auto()
+    OROP = auto()
+    LTOP = auto()
+    LEOP = auto()
+    GEOP = auto()
+    GTOP = auto()
+    NEOP = auto()
+    EQOP = auto()
+    INOP = auto()
+    NOOP = auto()
+    ANDOP = auto()
+    MINUS = auto()
+
+# Todo: map from character to Operator
+character_to_operator = {
+    '*' : Operator.MUL,
+    '/' : Operator.RDIV,
+    '+' : Operator.PLUS,
+    '-' : Operator.MINUS,
+    '=' : Operator.EQOP,
+    '<' : Operator.LTOP,
+    '>' : Operator.GTOP,
 }
 
 class Symbol:

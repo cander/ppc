@@ -55,7 +55,9 @@ class LexerInput:
         self.column_position = 0
         self.at_eol = False
 
-from ppc.symbol import Symbol, SymType, reserve_to_sym
+# at some point, just import *
+# from ppc.symbol import Symbol, SymType, reserve_to_sym, character_to_sym, character_to_operator
+from ppc.symbol import *
 
 class Lexer:
     def __init__(self, lexer_input):
@@ -100,7 +102,7 @@ class Lexer:
         elif ch == "'":
             return self.string_or_character_literal()
         # operators/symbols - special characters
-        elif ch in ':.':
+        elif ch in ':.+ - */)=,[]^;':
             return self.symbol_operator(ch)
 
     def skip_whitespace(self):
@@ -186,6 +188,7 @@ class Lexer:
     # Similar to https://homepages.cwi.nl/~steven/pascal/book/pcom.html#p503
     def symbol_operator(self, ch) -> Symbol:
         # Todo: there is a variable called op that we should be setting
+        op = Operator.NOOP
         match ch:
             case  ':':
                 ch = self.nextch()
@@ -207,6 +210,8 @@ class Lexer:
             # lparen
             # special
             case _:
+                sy = character_to_sym.get(ch)
+                op = character_to_operator.get(ch)
                 print(f"Unexpected character: {ch} found in symb_operator")
 
     # TBD: is plus/minus in front of literal handled here?
