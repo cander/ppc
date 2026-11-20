@@ -194,25 +194,28 @@ class Lexer:
                 ch = self.nextch()
                 if ch == '=':
                     self.nextch() # swallow the '='
-                    return Symbol(":=", SymType.BECOMES)
+                    return OperatorSymbol(":=", SymType.BECOMES, Operator.NOOP)
                 else:
-                    return Symbol(":", SymType.COLON)
+                    return OperatorSymbol(":", SymType.COLON, Operator.NOOP)
             # period
             case '.':
                 ch= self.nextch()
                 if ch == '.':
                     # for some reason, .. is colon
-                    return Symbol(":", SymType.COLON)
+                    return OperatorSymbol(":", SymType.COLON, Operator.NOOP)
                 else:
-                    return Symbol(".", SymType.PERIOD)
+                    return OperatorSymbol(".", SymType.PERIOD, Operator.NOOP)
             # less than
             # greater than
             # lparen
             # special
             case _:
+                # could check for unknown/failed look ups
+                # in theory, we only get here for a valid symbol character
                 sy = character_to_sym.get(ch)
                 op = character_to_operator.get(ch)
-                print(f"Unexpected character: {ch} found in symb_operator")
+                return OperatorSymbol(ch, sy, op)
+                # print(f"Unexpected character: {ch} found in symb_operator")
 
     # TBD: is plus/minus in front of literal handled here?
     # https://homepages.cwi.nl/~steven/pascal/book/pcom.html#p426

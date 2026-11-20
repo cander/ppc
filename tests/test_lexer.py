@@ -1,6 +1,5 @@
 import pytest
 from ppc.lexer import Lexer, LexerInput
-from ppc.symbol import SymType
 
 import io
 
@@ -202,6 +201,7 @@ class TestLexer:
         assert sy.type == SymType.REALCONST  # details of real are undefined,
         assert l.error_count() == 2
 
+from ppc.symbol import Operator, OperatorSymbol, SymType
 class TestLexerSymbols:
     def test_colon(self):
         l = Lexer(LexerInput(io.StringIO(": ")))
@@ -222,3 +222,27 @@ class TestLexerSymbols:
         l = Lexer(LexerInput(io.StringIO(".x ")))
         sy = l.insymbol()
         assert sy.type == SymType.PERIOD
+
+    def test_star(self):
+        l = Lexer(LexerInput(io.StringIO("* ")))
+        sy = l.insymbol()
+        assert sy.type == SymType.MULOP
+        assert sy.operator == Operator.MUL
+
+    def test_slash(self):
+        l = Lexer(LexerInput(io.StringIO("/ ")))
+        sy = l.insymbol()
+        assert sy.type == SymType.MULOP
+        assert sy.operator == Operator.RDIV
+
+    def test_plus(self):
+        l = Lexer(LexerInput(io.StringIO("+ ")))
+        sy = l.insymbol()
+        assert sy.type == SymType.ADDOP
+        assert sy.operator == Operator.PLUS
+
+    def test_minus(self):
+        l = Lexer(LexerInput(io.StringIO("- ")))
+        sy = l.insymbol()
+        assert sy.type == SymType.ADDOP
+        assert sy.operator == Operator.MINUS

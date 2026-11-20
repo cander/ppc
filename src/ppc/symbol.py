@@ -149,3 +149,8 @@ class Symbol:
     
     def __str__(self):
         return f"Symbol({self.str_value}, {self.type}, {self.actual_value})"
+
+class OperatorSymbol(Symbol):
+    def __init__(self, str_value: str, type: SymType, operator: Operator):
+        super().__init__(str_value, type)
+        self.operator = operator
